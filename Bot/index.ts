@@ -1,13 +1,15 @@
 import config from './config';
 import { CommandClient, GatewayClientEvents } from 'detritus-client';
+import { parse } from "./parseIconData.js";
+import { ChannelGuildText } from 'detritus-client/lib/structures';
+import { ClientEvents } from 'detritus-client/lib/constants';
+
 const cmdClient = new CommandClient(config.token, {
     gateway: {
         intents: 33539
     }
 });
-import { parse } from "./parseIconData.js";
-import { ChannelGuildText } from 'detritus-client/lib/structures';
-import { ClientEvents } from 'detritus-client/lib/constants';
+
 let gender = 'female';
 
 (async () => {
