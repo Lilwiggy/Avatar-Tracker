@@ -1,0 +1,19 @@
+{
+  "name": "avatar-tracker",
+  "version": "1.0.0",
+  "description": "Tracks various stats about avatars changed on Discord",
+  "main": "index.ts",
+  "scripts": {
+    "start": "tsc && node out/index.js"
+  },
+  "author": "Belle",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "colorthief": "^2.4.0",
+    "detritus-client": "^0.16.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
