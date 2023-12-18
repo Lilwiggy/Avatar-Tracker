@@ -1,4 +1,4 @@
-import { fetchUser, addAvatar } from './utils';
+import { fetchUser } from './utils';
 import { CommandClient, GatewayClientEvents } from 'detritus-client';
 import { parse } from "./parseIconData.js";
 import { ChannelGuildText } from 'detritus-client/lib/structures';
