@@ -1,8 +1,13 @@
-import config from './config';
+import { fetchUser, addAvatar } from './utils';
 import { CommandClient, GatewayClientEvents } from 'detritus-client';
 import { parse } from "./parseIconData.js";
 import { ChannelGuildText } from 'detritus-client/lib/structures';
 import { ClientEvents } from 'detritus-client/lib/constants';
+import pgPromise from 'pg-promise';
+import config from './config';
+
+const pgp = pgPromise();
+
 
 const cmdClient = new CommandClient(config.token, {
     gateway: {
@@ -12,8 +17,14 @@ const cmdClient = new CommandClient(config.token, {
 
 let gender = 'female';
 
+
 (async () => {
     const client = await cmdClient.run();
+
+    const db = pgp(config.postgres);
+          db.connect().catch(error => {
+            console.error('Error connecting to the database:', error);
+        });
 
     // These are used for personal use. Please ignore if you fork this bot and make it for yourself
     await client.rest.fetchGuild('1079483049445687418');
@@ -27,9 +38,11 @@ let gender = 'female';
     console.log('lmfao we gaming'); // Bot is up and running
 
     // Watch for all user changes that the bot can see
-    client.on(ClientEvents.USERS_UPDATE, (differences) => {
+    client.on(ClientEvents.USERS_UPDATE, async (differences) => {
         if (differences && differences.differences.avatar) {
-            parse(differences.user); // Parse and store data about the avatar changed
+            let user = await fetchUser(db, differences.user.id);
+            if (!user.track) return; // I do be respecting people's privacy
+            await parse(db, differences.user); // Parse and store data about the avatar changed
 
             if (differences.user.id === '282018830992277504') {
                 genChat.createMessage('Hey @everyone! Lexi just changed they icon. Rolling for a new gender...');
@@ -55,7 +68,6 @@ let gender = 'female';
         let msg = paylaod.message;
         if (msg.content.toLowerCase() === '!test') {
             msg.channel.createMessage('yo');
-            parse(msg.member);
         }
     });
 })();
