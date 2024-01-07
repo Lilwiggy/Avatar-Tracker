@@ -3,7 +3,7 @@ import config from './config';
 import fetch from 'node-fetch';
 import { IDatabase } from "pg-promise";
 import { User } from "detritus-client/lib/structures/user.js";
-import { Icons, Icon, addAvatar } from './utils';
+import { Icon, addAvatar } from './utils';
 
 async function parse(db: IDatabase<{}>, user: User) {
     let today = new Date();
