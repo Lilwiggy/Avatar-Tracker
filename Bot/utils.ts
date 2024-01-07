@@ -25,9 +25,7 @@ async function addAvatar(db: IDatabase<{}>, icon: Icon, id: string) {
         hash = icon.hash;
 
     // Check if avatar is in DB
-    let d = await db.oneOrNone('SELECT * FROM user_data WHERE user_id = $1 AND hash = $2', [id, `${icon.hash}`]); // Hash may be null
-
-    console.log(icon, hash)
+    let d = await db.oneOrNone('SELECT * FROM user_data WHERE user_id = $1 AND hash = $2', [id, hash]);
 
     if (d) return;
 
