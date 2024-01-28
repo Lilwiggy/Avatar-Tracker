@@ -7,7 +7,7 @@ import { Icon, addAvatar } from './utils';
 
 async function parse(db: IDatabase<{}>, user: User) {
     let today = new Date();
-    let rgb = await fetchColor(`https://d.lu.je/avatar/${user.id}?size=512`);
+    let rgb = await fetchColor(user.avatarUrl);
     let hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
 
         let r = await fetch('https://api.imgur.com/3/image', {

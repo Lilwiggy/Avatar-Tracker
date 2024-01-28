@@ -11,7 +11,7 @@ async function fetchUser(db: IDatabase<{}>, id: string) {
         let user = await db.oneOrNone('SELECT * FROM users WHERE id = $1', id);
         if (!user) {
             await db.query('INSERT INTO users (id, track) VALUES ($1, true)', id);
-            await fetchUser(db, id);
+            user = await fetchUser(db, id);
         }
         return user;
 };
