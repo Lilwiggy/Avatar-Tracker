@@ -5,3 +5,4 @@ config.ts
 Bot/icons.json
 Website/front/assets/fonts/tex-gyre-adventor.bold-italic.otf
 start.sh
+log.txt
