@@ -55,10 +55,10 @@ let gender = 'female';
 
                 client.rest.createMessage('1079483050628501556',`Coin: Flipped. Landed on ${coin === 1 ? 'Heads' : 'Tails'} which means that Lexi is now a ${coin === 1 ? 'Male' : 'Female'}.`);
             } else if (differences.user.id === '232614905533038593') {
-                client.rest.editChannel('1092514036605779988', {
+                await client.rest.editChannel('1092514036605779988', {
                     name: `Belle changes: ${++n}`,
                 });
-                client.rest.createMessage('1092514036605779988', `Hey so fuckin, Belle changed her icon AGAIN... This makes ${n} times since I have been watching...`)
+                await client.rest.createMessage('1079483050628501556', `Hey so fuckin, Belle changed her icon AGAIN... This makes ${n} times since I have been watching...`)
             }
         }
     });
