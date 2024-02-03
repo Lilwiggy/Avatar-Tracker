@@ -1,10 +1,11 @@
-import { fetchUser } from './utils';
-import { CommandClient, GatewayClientEvents, ShardClient } from 'detritus-client';
+import { addAvatar, fetchUser } from './utils';
+import { CommandClient, GatewayClientEvents, ShardClient, InteractionCommandClient } from 'detritus-client';
 import { parse } from "./parseIconData.js";
-import { ChannelGuildText, ChannelGuildVoice } from 'detritus-client/lib/structures';
-import { ActivityTypes, ClientEvents } from 'detritus-client/lib/constants';
+import { ChannelGuildVoice } from 'detritus-client/lib/structures';
+import { ActivityTypes, ClientEvents, InteractionCallbackTypes } from 'detritus-client/lib/constants';
 import pgPromise from 'pg-promise';
 import config from './config';
+import { fetchColor } from './fetchAverageColor';
 
 const pgp = pgPromise();
 
@@ -14,12 +15,35 @@ const cmdClient = new CommandClient(config.token, {
         intents: 33539
     }
 });
+const interactionClient = new InteractionCommandClient(config.token);
 
 let gender = 'female';
 
 
 (async () => {
+    interactionClient.add({
+        description: 'Subscribe to start tracking your avatar changes.',
+        name: 'track',
+        run: async (context) => {
+            let user = await fetchUser(db, context.userId);
+            if (user) {
+                return context.respond(InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, 'You are already being tracked! If you would like to unsubscribe please type `/unsub`.');
+            } else {
+                await db.query('INSERT INTO users (id, track) VALUES ($1, true)', context.userId);
+                context.user.track = true;
+                await addAvatar(db, {
+                    averageColor: await fetchColor(context.user.avatarUrl),
+                    date: new Date().toISOString(),
+                    hash: context.user.avatar, 
+                    link: context.user.avatarUrl
+                }, context.userId);
+                return context.respond(InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, 'Thank you for subscribing! Your current avatar has been added to the database and I will add your new ones automatically!');
+            }
+        },
+      });
     const client = await cmdClient.run();
+    await interactionClient.run();
+    await interactionClient.uploadApplicationCommands().catch(console.error);
 
     const db = pgp(config.postgres);
           db.connect().catch(error => {
@@ -40,7 +64,7 @@ let gender = 'female';
     client.on(ClientEvents.USERS_UPDATE, async (differences) => {
         if (differences && differences.differences.avatar) {
             let user = await fetchUser(db, differences.user.id);
-            if (!user.track) return; // I do be respecting people's privacy
+            if (!user || !user.track) return; // I do be respecting people's privacy
             await parse(db, differences.user); // Parse and store data about the avatar changed
 
             if (differences.user.id === '282018830992277504') {

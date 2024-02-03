@@ -8,11 +8,7 @@ declare module 'detritus-client/lib/structures/user' {
   }
 
 async function fetchUser(db: IDatabase<{}>, id: string) {
-        let user = await db.oneOrNone('SELECT * FROM users WHERE id = $1', id);
-        if (!user) {
-            await db.query('INSERT INTO users (id, track) VALUES ($1, true)', id);
-            user = await fetchUser(db, id);
-        }
+        let user = await db.oneOrNone('SELECT * FROM users WHERE id = $1', id); // If User is not in DB do not add, this function will be called on all UserUpdates and I do not want to save everyone the bot sees
         return user;
 };
 
