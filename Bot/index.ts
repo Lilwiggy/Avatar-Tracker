@@ -31,12 +31,7 @@ let gender = 'female';
             } else {
                 await db.query('INSERT INTO users (id, track) VALUES ($1, true)', context.userId);
                 context.user.track = true;
-                await addAvatar(db, {
-                    averageColor: await fetchColor(context.user.avatarUrl),
-                    date: new Date().toISOString(),
-                    hash: context.user.avatar, 
-                    link: context.user.avatarUrl
-                }, context.userId);
+                await parse(db, context.user);
                 return context.respond(InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, 'Thank you for subscribing! Your current avatar has been added to the database and I will add your new ones automatically!');
             }
         },
