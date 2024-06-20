@@ -37,6 +37,17 @@ let gender = 'female';
         },
       });
 
+      interactionClient.add({
+        description: 'Check to see if your avatar has been tracked or not.',
+        name: 'check',
+        run: async (context) => {
+            let res = await addAvatar(db, context.user);
+            if (res === RETURN_CODES.ALREADY_IN_DB)
+                return context.respond(InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, 'This avatar is already logged!');
+            else
+                return context.respond(InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE, 'The avatar was not logged... but it is now!');
+        },
+      });
     const client = await cmdClient.run();
     await interactionClient.run();
     await interactionClient.uploadApplicationCommands().catch(console.error);
@@ -87,15 +98,6 @@ let gender = 'female';
         let msg = paylaod.message;
         if (msg.content.toLowerCase() === '!test') {
             msg.channel.createMessage('yo');
-        }
-
-
-        if (msg.content.toLocaleLowerCase() === '!check') {
-            let res = await addAvatar(db, msg.author);
-            if (res === RETURN_CODES.ALREADY_IN_DB)
-                msg.channel.createMessage('This avatar is already logged!');
-            else
-                msg.channel.createMessage('The avatar was not logged... but it is now!') 
         }
     });
 })();
